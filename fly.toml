@@ -12,7 +12,22 @@ primary_region = "syd"
 # Use the Docker image instead of building from source
 
 [build]
-  image = "flyio/redis:6.2.6"
+  # Pinned to the digest running on machine 328751dea03568 (2026-10-17), so a
+  # deploy only changes configuration, never the Redis binary.
+  image = "docker-hub-mirror.fly.io/flyio/redis@sha256:2a9f3376d0fb4663b390c801d66f43c72f68ada1c9a0d3e52586be709e64707e"
+
+# Queue-safe persistence (BullMQ requires noeviction). start-redis-server.sh
+# reads these; REDIS_PASSWORD comes from Fly secrets, never from this file.
+# Enable AOF online (CONFIG SET appendonly yes) before the first deploy with
+# APPENDONLY=yes, otherwise Redis starts from an empty or stale AOF.
+[env]
+  APPENDONLY = "yes"
+  MAXMEMORY_POLICY = "noeviction"
+
+# Unchanged size for now (Jun 2026-10-16: downsizing is re-evaluated later).
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "4gb"
 
 # Uncomment these lines for public internet access to Redis on port 10000
 #
