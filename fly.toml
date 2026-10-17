@@ -24,10 +24,12 @@ primary_region = "syd"
   APPENDONLY = "yes"
   MAXMEMORY_POLICY = "noeviction"
 
-# Unchanged size for now (Jun 2026-10-16: downsizing is re-evaluated later).
+# 1GB (Jun approved 2026-10-18): steady use is ~9MB (webhook snapshots, page
+# metrics, the product-group queue); checkout rates no longer use this Redis.
+# start-redis-server.sh sets maxmemory to 90% of this (~921MB).
 [[vm]]
   size = "shared-cpu-2x"
-  memory = "4gb"
+  memory = "1gb"
 
 # Uncomment these lines for public internet access to Redis on port 10000
 #
